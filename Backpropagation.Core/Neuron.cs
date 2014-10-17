@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Troschuetz.Random.Generators;
 
 namespace Backpropagation.Core
 {
@@ -13,10 +9,9 @@ namespace Backpropagation.Core
     public class Neuron
     {
         private Func<Double[], Double[], Double> ActivationFunction { get; set; }
-        private Double[] WeightFactors { get; set; }
         private Double _output;
         private readonly int _inputCount;
-        static MT19937Generator r = new Troschuetz.Random.Generators.MT19937Generator();
+        static Random r = new Random();
         private void InitWeightFactors()
         {
             for (int i = 0; i < WeightFactors.Count(); i++)
@@ -37,13 +32,28 @@ namespace Backpropagation.Core
             WeightFactors = new double[inputCount];
             ActivationFunction = activationFunc;
             InitWeightFactors();
+            //TODO: Add function for setting train speed
+            TrainSpeed = 1;
+        }
+
+        public void AdjustWeights()
+        {
+            for (int i = 0; i < _inputCount; i++)
+            {
+                WeightFactors[i] += TrainSpeed*ErrorSignal*Inputs[i]*_output*(1 - _output);
+            }
         }
 
         public void InitInputValues(Double[] inputValues)
         {
             Inputs = inputValues;
         }
+
         public Double[] Inputs { get; private set; }
+
+        public Double ErrorSignal { get; set; }
+        public Double[] WeightFactors { get; set; }
+        public Double TrainSpeed { get; private set; }
 
         virtual public Double Output
         {

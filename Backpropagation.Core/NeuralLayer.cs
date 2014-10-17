@@ -39,7 +39,7 @@ namespace Backpropagation.Core
             }
         }
 
-        private ICollection<Neuron> Neurons { get; set; }
+        public ICollection<Neuron> Neurons { get; set; }
 
         public Double[] GetLayerOutput()
         {

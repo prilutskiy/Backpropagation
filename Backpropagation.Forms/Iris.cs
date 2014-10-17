@@ -11,7 +11,9 @@ namespace Backpropagation.Forms
 {
     public enum IrisClass
     {
-        Setosa, Virginica, Versicolor
+        Setosa,     //0-0-1
+        Virginica,  //0-1-0
+        Versicolor, //1-0-0
     }
     public class Iris : INeuralImage
     {
@@ -45,7 +47,24 @@ namespace Backpropagation.Forms
             }
             return irisList;
         }
-        
+        public static ICollection<INeuralImage> GetImagesFromFile(string path)
+        {
+            var irisList = new List<INeuralImage>();
+            String rawData = File.ReadAllText(path);
+            var irisLines = rawData.Split('\n');
+            foreach (var irisLine in irisLines)
+            {
+                if (irisLine.Length < 1) break;
+                var irProps = irisLine.Split(',');
+                INeuralImage i = new Iris(GetIrisClass(irProps[4]), new[] {
+                    Double.Parse(irProps[0], CultureInfo.InvariantCulture),
+                    Double.Parse(irProps[1], CultureInfo.InvariantCulture),
+                    Double.Parse(irProps[2], CultureInfo.InvariantCulture),
+                    Double.Parse(irProps[3], CultureInfo.InvariantCulture)});
+                irisList.Add(i);
+            }
+            return irisList;
+        }
         #endregion
 
         public Iris(IrisClass _class, double[] values)
