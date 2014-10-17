@@ -6,11 +6,13 @@ namespace Backpropagation.Core
     /// <summary>
     /// Class represents neuron
     /// </summary>
+    [Serializable]
     public class Neuron
     {
         #region Static members
         static Random r = new Random();
         #endregion
+
         #region Private members
         private Func<Double[], Double[], Double> ActivationFunction { get; set; }
         private Double _output;
@@ -24,6 +26,7 @@ namespace Backpropagation.Core
         }
         #endregion
 
+        #region Public members
         /// <summary>
         /// Default ctor for creating neuron instance
         /// </summary>
@@ -37,7 +40,6 @@ namespace Backpropagation.Core
             WeightFactors = new double[inputCount];
             ActivationFunction = activationFunc;
             InitWeightFactors();
-            //TODO: Add function for setting train speed
             TrainSpeed = trainSpeed;
         }
         /// <summary>
@@ -47,7 +49,7 @@ namespace Backpropagation.Core
         {
             for (int i = 0; i < _inputCount; i++)
             {
-                WeightFactors[i] += TrainSpeed*ErrorSignal*Inputs[i]*_output*(1 - _output);
+                WeightFactors[i] += TrainSpeed * ErrorSignal * Inputs[i] * _output * (1 - _output);
             }
         }
         /// <summary>
@@ -79,12 +81,13 @@ namespace Backpropagation.Core
         /// </summary>
         virtual public Double Output
         {
-            get 
+            get
             {
                 _output = ActivationFunction(Inputs, WeightFactors);
                 return _output;
             }
             set { _output = value; }
         }
+        #endregion
     }
 }

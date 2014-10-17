@@ -9,6 +9,7 @@ namespace Backpropagation.Core
     /// <summary>
     /// Class represents artificial neural network
     /// </summary>
+    [Serializable]
     public class NeuralNetwork
     {
         #region Static members
@@ -211,7 +212,7 @@ namespace Backpropagation.Core
         /// <returns>Recognized class id</returns>
         public int? GetClassIdOrDefault(INeuralImage img)
         {
-            var values = GetNetworkOutput(img);
+            var values = RoundValues(GetNetworkOutput(img));
             for (int i = 0; i < values.Count(); i++)
             {
                 if ((int)values[i] == 1) return i;

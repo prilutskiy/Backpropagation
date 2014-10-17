@@ -11,6 +11,7 @@ namespace Backpropagation.Core
     /// <summary>
     /// Class represents artificial neural network layer
     /// </summary>
+    [Serializable]
     public class NeuralLayer
     {
         #region Private members
