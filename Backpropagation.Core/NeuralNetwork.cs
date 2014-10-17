@@ -24,31 +24,133 @@ namespace Backpropagation.Core
         }
         #endregion
 
+        #region Private members
         private int LayerCount;
-        public NeuralNetwork(int inputCount, int outputCount, int layerCount = 2)
+        private Boolean CheckResult(INeuralImage img, Double[] values)
+        {
+            bool result = true;
+            for (int i = 0; i < values.Count(); i++)
+            {
+                if (i == img.ClassId)
+                {
+                    result &= (int)values[img.ClassId] == 1;
+                }
+                else
+                {
+                    result &= (int)values[i] == 0;
+                }
+            }
+            return result;
+        }
+        private NeuralLayer GetInputNeuralLayer()
+        {
+            return NeuralLayers.First();
+        }
+        private NeuralLayer GetOutputNeuralLayer()
+        {
+            return NeuralLayers.Last();
+        }
+        private Double[] RoundValues(Double[] values)
+        {
+            var rounded = new double[values.Count()];
+            for (int i = 0; i < rounded.Count(); i++)
+                rounded[i] = Math.Round(values[i]);
+            return rounded;
+        }
+
+        private Double[] GetOuputRule(INeuralImage img)
+        {
+            var rule = new double[OutputCount];
+            rule[img.ClassId] = 1.0;
+            return rule;
+        }
+        /// <summary>
+        /// Set of neural layers
+        /// </summary>
+        private ICollection<NeuralLayer> NeuralLayers { get; set; }
+        /// <summary>
+        /// Initializes neural layers
+        /// </summary>
+        private void InitNeuralLayers()
+        {
+            NeuralLayers = new List<NeuralLayer>();
+            if (ActivationFunction == null) throw new NullReferenceException("Activation function is not defined");
+            for (int i = 0; i < LayerCount; i++)
+            {
+                var l = new NeuralLayer(InputCount, i == LayerCount - 1 ? OutputCount : InputCount, ActivationFunction);
+                NeuralLayers.Add(l);
+            }
+        }
+        /// <summary>
+        /// Neuron activation function
+        /// </summary>
+        private Func<Double[], Double[], Double> ActivationFunction { get; set; }
+        /// <summary>
+        /// Adjusts weight factors for all neurons on each layer
+        /// </summary>
+        private void AdjustNeuronsWeights()
+        {
+            foreach (var neuralLayer in NeuralLayers)
+                foreach (var neuron in neuralLayer.Neurons)
+                {
+                    neuron.AdjustWeights();
+                    neuron.ErrorSignal = default(double);
+                }
+        }
+        /// <summary>
+        /// Sets error signal for each neuron
+        /// </summary>
+        /// <param name="outputDeviation"></param>
+        private void SetNeuronErrorSignals(double[] outputDeviation)
+        {
+            var outputLayer = GetOutputNeuralLayer();
+            int x = 0;
+            foreach (var neuron in outputLayer.Neurons)//устанавливаем коэф-ты ошибки нейронов в выходном слое, основываясь на полученных выходных значениях
+                neuron.ErrorSignal = outputDeviation[x++];
+            for (int nc = NeuralLayers.Count - 1; nc > 0; nc--)//проходим по всем слоям, начиная с выходного
+            {
+                var layer = NeuralLayers.ToList()[nc];//текущий слой
+                var subLayer = NeuralLayers.ToList()[nc - 1]; // предыдущий слой
+                for (int i = 0; i < layer.Neurons.Count; i++)//проходим по всем нейронам в выбранном слое
+                {
+                    for (int j = 0; j < subLayer.Neurons.Count; j++)//проходим по всем нейронам в предыдущем слое
+                    {
+                        var neuron = layer.Neurons.ToList()[i]; //нейрон в основном слое
+                        var subNeuron = subLayer.Neurons.ToList()[j]; // нейрон в подслое
+                        subNeuron.ErrorSignal += neuron.ErrorSignal * neuron.WeightFactors[j]; //устанавливаем коэф. ошибки нейрона в подслое, основываясь на коэф.-те ошибки нейрона в основном слое
+                    }
+                }
+            }
+        }
+        #endregion
+        /// <summary>
+        /// Default ctor for creating neural network instance
+        /// </summary>
+        /// <param name="inputCount">Inputs count of ANN</param>
+        /// <param name="outputCount">Outputs count of ANN</param>
+        /// <param name="layerCount">Layers count of ANN</param>
+        /// <param name="activationFunction">Neuron activation function</param>
+        public NeuralNetwork(int inputCount, int outputCount, Func<Double[], Double[], Double> activationFunction, int layerCount = 2)
         {
             if (layerCount < 2) throw new ArgumentException("Layer count cannot be less than 2.");
             InputCount = inputCount;
             OutputCount = outputCount;
             LayerCount = layerCount;
+            this.ActivationFunction = activationFunction;
         }
-
-        public Func<Double[], Double[], Double> ActivationFunction { get; set; }
+        /// <summary>
+        /// Count of inputs in ANN
+        /// </summary>
         public Int32 InputCount { get; private set; }
+        /// <summary>
+        /// Count of outputs in ANN
+        /// </summary>
         public Int32 OutputCount { get; private set; }
-        public ICollection<NeuralLayer> NeuralLayers { get; set; }
-
-        private void InitNeuralLayers()
-        {
-            NeuralLayers = new List<NeuralLayer>();
-            if (ActivationFunction == null) throw new NullReferenceException("Activation function is not defined");
-            for (int i = 0; i < LayerCount; i ++)
-            {
-                var l = new NeuralLayer(InputCount, i == LayerCount-1 ? OutputCount : InputCount, ActivationFunction);
-                NeuralLayers.Add(l);
-            }
-        }
-
+        /// <summary>
+        /// Gets output sequence produced by ANN
+        /// </summary>
+        /// <param name="image"></param>
+        /// <returns></returns>
         public Double[] GetNetworkOutput(INeuralImage image)
         {
             if (NeuralLayers == null) throw new NullReferenceException("Neural layers are not initialized");
@@ -70,22 +172,13 @@ namespace Backpropagation.Core
 
             return resultValues;
         }
-
-        public Double[] RoundValues(Double[] values)
-        {
-            var rounded = new double[values.Count()];
-            for (int i = 0; i < rounded.Count(); i++)
-                rounded[i] = Math.Round(values[i]);
-            return rounded;
-        }
-        
-        public Double[] GetOuputRule(INeuralImage img)
-        {
-            var rule = new double[OutputCount];
-            rule[img.ClassId] = 1.0;
-            return rule;
-        }
-        public int TrainNetwork(ICollection<INeuralImage> imgs)
+        /// <summary>
+        /// Trains the ANN
+        /// </summary>
+        /// <param name="imgs">Set of images</param>
+        /// <param name="trainCallBack">Training callback function</param>
+        /// <returns></returns>
+        public int TrainNetwork(ICollection<INeuralImage> imgs, Action<int> trainCallBack = null)
         {
             InitNeuralLayers();
             int iterations = 0;
@@ -105,76 +198,25 @@ namespace Backpropagation.Core
                     SetNeuronErrorSignals(outputDeviation);//вычислить коэф. ошибки для каждого нейрона каждого слоя (начиная с выходного слоя
                     AdjustNeuronsWeights(); //корректируем весовые коэф-ты начиная со входного слоя
                     iterations++;
-                    ClearCurrentConsoleLine();
-                    Console.Write(iterations);
+                    if (trainCallBack != null)
+                        trainCallBack(iterations);
                 }
             } while (noErrors != true);
             return iterations;
         }
-        public static void ClearCurrentConsoleLine()
+        /// <summary>
+        /// Recognizes specified image. Returns null if cannot recognize
+        /// </summary>
+        /// <param name="img">Image to recognize</param>
+        /// <returns>Recognized class id</returns>
+        public int? GetClassIdOrDefault(INeuralImage img)
         {
-            int currentLineCursor = System.Console.CursorTop;
-            System.Console.SetCursorPosition(0, System.Console.CursorTop);
-            System.Console.Write(new string(' ', System.Console.WindowWidth));
-            System.Console.SetCursorPosition(0, currentLineCursor);
-        }
-        private void AdjustNeuronsWeights()
-        {
-            foreach (var neuralLayer in NeuralLayers)
-                foreach (var neuron in neuralLayer.Neurons)
-                {
-                    neuron.AdjustWeights();
-                    neuron.ErrorSignal = default(double);
-                }
-        }
-
-        private void SetNeuronErrorSignals(double[] outputDeviation)
-        {
-            var outputLayer = GetOutputNeuralLayer();
-            int x = 0;
-            foreach (var neuron in outputLayer.Neurons)//устанавливаем коэф-ты ошибки нейронов в выходном слое, основываясь на полученных выходных значениях
-                neuron.ErrorSignal = outputDeviation[x++];
-            for (int nc = NeuralLayers.Count - 1; nc > 0; nc--)//проходим по всем слоям, начиная с выходного
-            {
-                var layer = NeuralLayers.ToList()[nc];//текущий слой
-                var subLayer = NeuralLayers.ToList()[nc - 1]; // предыдущий слой
-                for (int i = 0; i < layer.Neurons.Count; i++)//проходим по всем нейронам в выбранном слое
-                {
-                    for (int j = 0; j < subLayer.Neurons.Count; j++)//проходим по всем нейронам в предыдущем слое
-                    {
-                        var neuron = layer.Neurons.ToList()[i]; //нейрон в основном слое
-                        var subNeuron = subLayer.Neurons.ToList()[j]; // нейрон в подслое
-                        subNeuron.ErrorSignal += neuron.ErrorSignal*neuron.WeightFactors[j]; //устанавливаем коэф. ошибки нейрона в подслое, основываясь на коэф.-те ошибки нейрона в основном слое
-                    }
-                }
-            }
-        }
-
-
-        public Boolean CheckResult(INeuralImage img, Double[] values)
-        {
-            bool result = true;
+            var values = GetNetworkOutput(img);
             for (int i = 0; i < values.Count(); i++)
             {
-                if (i == img.ClassId)
-                {
-                    result &= (int)values[img.ClassId] == 1;
-                }
-                else
-                {
-                    result &= (int) values[i] == 0;
-                }
+                if ((int)values[i] == 1) return i;
             }
-            return result;
-        }
-        public NeuralLayer GetInputNeuralLayer()
-        {
-            return NeuralLayers.First();
-        }
-
-        public NeuralLayer GetOutputNeuralLayer()
-        {
-            return NeuralLayers.Last();
+            return null;
         }
     }
 }
