@@ -19,12 +19,7 @@ namespace Backpropagation.Core
             Double sum = 0;
             for (int i = 0; i < count; i++)
                 sum += inputValues[i]*weights[i];
-            //TODO: Inline this!
-            var e = Math.E;
-            var pow = Math.Pow(e, -sum);
-            var s = pow + 1.0;
-            var sigm = Math.Pow(s, -1);
-            //
+            var sigm = Math.Pow(Math.Pow(Math.E, -sum) + 1.0, -1);
             return sigm;
         }
         #endregion
