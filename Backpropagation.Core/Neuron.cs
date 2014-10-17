@@ -42,6 +42,11 @@ namespace Backpropagation.Core
             InitWeightFactors();
             TrainSpeed = trainSpeed;
         }
+        [Obsolete("This constructor is obsolete. Use parametrized one instead", true)]
+        public Neuron()
+        {
+            
+        }
         /// <summary>
         /// Adjusts neuron weight factors according to error signal set
         /// </summary>
@@ -63,7 +68,7 @@ namespace Backpropagation.Core
         /// <summary>
         /// Neuron inputs
         /// </summary>
-        public Double[] Inputs { get; private set; }
+        public Double[] Inputs { get; set; }
         /// <summary>
         /// Neuron error signal
         /// </summary>
@@ -75,7 +80,7 @@ namespace Backpropagation.Core
         /// <summary>
         /// Neuron training speed
         /// </summary>
-        public Double TrainSpeed { get; private set; }
+        public Double TrainSpeed { get; set; }
         /// <summary>
         /// Neuron output signal
         /// </summary>

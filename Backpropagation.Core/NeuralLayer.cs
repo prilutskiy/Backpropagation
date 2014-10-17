@@ -44,6 +44,11 @@ namespace Backpropagation.Core
 
             GenerateNeurons(_outputCount, activationFunc);
         }
+        [Obsolete("This constructor is obsolete. Use parametrized one instead", true)]
+        public NeuralLayer()
+        {
+            
+        }
         /// <summary>
         /// Initializes input values
         /// </summary>
@@ -55,7 +60,7 @@ namespace Backpropagation.Core
         /// <summary>
         /// Set of neurons on this layer
         /// </summary>
-        public ICollection<Neuron> Neurons { get; private set; }
+        public List<Neuron> Neurons { get; set; }
         /// <summary>
         /// Get output values of the layer
         /// </summary>

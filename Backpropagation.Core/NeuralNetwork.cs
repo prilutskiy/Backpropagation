@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -65,10 +66,6 @@ namespace Backpropagation.Core
             rule[img.ClassId] = 1.0;
             return rule;
         }
-        /// <summary>
-        /// Set of neural layers
-        /// </summary>
-        private ICollection<NeuralLayer> NeuralLayers { get; set; }
         /// <summary>
         /// Initializes neural layers
         /// </summary>
@@ -139,14 +136,23 @@ namespace Backpropagation.Core
             LayerCount = layerCount;
             this.ActivationFunction = activationFunction;
         }
+        [Obsolete("This constructor is obsolete. Use parametrized one instead", true)]
+        public NeuralNetwork()
+        {
+            
+        }
         /// <summary>
         /// Count of inputs in ANN
         /// </summary>
-        public Int32 InputCount { get; private set; }
+        public Int32 InputCount { get; set; }
         /// <summary>
         /// Count of outputs in ANN
         /// </summary>
-        public Int32 OutputCount { get; private set; }
+        public Int32 OutputCount { get; set; }
+        /// <summary>
+        /// Set of neural layers
+        /// </summary>
+        public List<NeuralLayer> NeuralLayers { get; set; }
         /// <summary>
         /// Gets output sequence produced by ANN
         /// </summary>
@@ -173,13 +179,15 @@ namespace Backpropagation.Core
 
             return resultValues;
         }
+
         /// <summary>
         /// Trains the ANN
         /// </summary>
         /// <param name="imgs">Set of images</param>
+        /// <param name="iterationsLimit">Limit of iterations to complete training; -1 - unlimited</param>
         /// <param name="trainCallBack">Training callback function</param>
         /// <returns></returns>
-        public int TrainNetwork(ICollection<INeuralImage> imgs, Action<int> trainCallBack = null)
+        public int TrainNetwork(ICollection<INeuralImage> imgs, int iterationsLimit = -1 ,Action<int> trainCallBack = null)
         {
             InitNeuralLayers();
             int iterations = 0;
@@ -201,6 +209,7 @@ namespace Backpropagation.Core
                     iterations++;
                     if (trainCallBack != null)
                         trainCallBack(iterations);
+                    if (iterationsLimit > 0 && iterations >= iterationsLimit) return iterations;
                 }
             } while (noErrors != true);
             return iterations;

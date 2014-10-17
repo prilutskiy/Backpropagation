@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 using Backpropagation.Core;
 using Backpropagation.Forms;
 
@@ -13,7 +15,7 @@ namespace Backpropagation.Console
     {
         static void Main(string[] args)
         {
-            int count = 5;
+            int count = 1;
             ICollection<INeuralImage> irises = Iris.GetImagesFromFile("iris.data");
             //выборка для обучения
             var trainIrises = new List<INeuralImage>();
@@ -27,9 +29,9 @@ namespace Backpropagation.Console
             testIrises.AddRange(irises.Where(i => i.ClassId == 1).Skip(count));
             testIrises.AddRange(irises.Where(i => i.ClassId == 2).Skip(count));
 
-            var network = new NeuralNetwork(4, 3, NeuralNetwork.SigmoidalActivationFunction);
+            var network = new NeuralNetwork(4, 3, NeuralNetwork.SigmoidalActivationFunction, 3);
             System.Console.WriteLine("ANN is being trained:");
-            network.TrainNetwork(trainIrises, DisplayProgress);
+            network.TrainNetwork(trainIrises, 50000, DisplayProgress);
             System.Console.WriteLine("");
 
             var recognAbility = 0;
@@ -49,6 +51,13 @@ namespace Backpropagation.Console
             System.Console.WriteLine("Распознающая способность: {0}%", GetPercentage(recognAbility, trainIrises.Count));
             System.Console.WriteLine("Обобщающая способность: {0}%", GetPercentage(generAbility, testIrises.Count));
             
+            System.Console.ReadLine();
+            XmlSerializer xser = new XmlSerializer(typeof(NeuralNetwork));
+            var fs = new FileStream("ANN.xml", FileMode.Create);
+            xser.Serialize(fs, network);
+            fs.Close();
+
+            System.Console.WriteLine("Data saved");
             System.Console.ReadLine();
         }
 
