@@ -13,21 +13,10 @@ namespace Backpropagation.Core
     /// </summary>
     public class NeuralLayer
     {
+        #region Private members
         private readonly int _inputCount;
         private readonly int _outputCount;
         private Double[] Inputs;
-        public NeuralLayer(int inputCount, int outputCount, Func<Double[], Double[], Double> activationFunc)
-        {
-            _inputCount = inputCount;
-            _outputCount = outputCount;
-
-            GenerateNeurons(_outputCount, activationFunc);
-        }
-
-        public void InitInputValues(Double[] inputValues)
-        {
-            Inputs = inputValues;
-        }
         private void GenerateNeurons(int outputCount, Func<Double[], Double[], Double> activationFunc)
         {
             Neurons = new List<Neuron>();
@@ -38,9 +27,38 @@ namespace Backpropagation.Core
                 Neurons.Add(n);
             }
         }
+        #endregion
 
-        public ICollection<Neuron> Neurons { get; set; }
+        #region Public members
+        /// <summary>
+        /// Default ctor for creating ANN layer of neurons
+        /// </summary>
+        /// <param name="inputCount">Network inputs count</param>
+        /// <param name="outputCount">Network outputs count</param>
+        /// <param name="activationFunc">Neuron activation function</param>
+        public NeuralLayer(int inputCount, int outputCount, Func<Double[], Double[], Double> activationFunc)
+        {
+            _inputCount = inputCount;
+            _outputCount = outputCount;
 
+            GenerateNeurons(_outputCount, activationFunc);
+        }
+        /// <summary>
+        /// Initializes input values
+        /// </summary>
+        /// <param name="inputValues"></param>
+        public void InitInputValues(Double[] inputValues)
+        {
+            Inputs = inputValues;
+        }
+        /// <summary>
+        /// Set of neurons on this layer
+        /// </summary>
+        public ICollection<Neuron> Neurons { get; private set; }
+        /// <summary>
+        /// Get output values of the layer
+        /// </summary>
+        /// <returns></returns>
         public Double[] GetLayerOutput()
         {
             var arr = new Double[_outputCount];
@@ -52,5 +70,6 @@ namespace Backpropagation.Core
             }
             return arr;
         }
+        #endregion
     }
 }
