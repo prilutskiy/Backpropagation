@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Backpropagation.Core;
 
 namespace Backpropagation.Forms
 {
@@ -12,8 +13,9 @@ namespace Backpropagation.Forms
     {
         Setosa, Virginica, Versicolor
     }
-    public class Iris
+    public class Iris : INeuralImage
     {
+        #region Static methods
         private static IrisClass GetIrisClass(String classString)
         {
             switch (classString)
@@ -25,8 +27,7 @@ namespace Backpropagation.Forms
                     throw new InvalidOperationException();
             }
         }
-        #region Static methods
-
+        /*
         public static ICollection<Iris> GetIrisesFromFile(string path)
         {
             var irisList = new List<Iris>();
@@ -45,50 +46,15 @@ namespace Backpropagation.Forms
             }
             return irisList;
         }
+        */
         #endregion
-        /// <summary>
-        /// Default ctor
-        /// </summary>
-        public Iris()
-        {
 
-        }
-        /// <summary>
-        /// Parametrized ctor
-        /// </summary>
-        /// <param name="type">Iris type</param>
-        /// <param name="x">First coordinate</param>
-        /// <param name="y">Second coordinate</param>
-        /// <param name="z">Third coordinate</param>
-        /// <param name="t">Fourth coordinate</param>
-        public Iris(IrisClass type, double x, double y, double z, double t)
+        public IrisClass GetClass()
         {
-            Class = type;
-            X = x;
-            Y = y;
-            Z = z;
-            T = t;
+            return (IrisClass) Class;
         }
-        /// <summary>
-        /// Class of an iris
-        /// </summary>
-        public IrisClass Class { get; set; }
-        /// <summary>
-        /// First coordinate
-        /// </summary>
-        public double X { get; set; }
-        /// <summary>
-        /// Second coordinate
-        /// </summary>
-        public double Y { get; set; }
-        /// <summary>
-        /// Third coordinate
-        /// </summary>
-        public double Z { get; set; }
-        /// <summary>
-        /// Fourth coordinate
-        /// </summary>
-        public double T { get; set; }
-
+        public int Class { get; set; }
+        public double[] Values { get; set; }
     }
+
 }

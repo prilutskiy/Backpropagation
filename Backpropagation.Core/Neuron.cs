@@ -9,12 +9,11 @@ namespace Backpropagation.Core
     /// <summary>
     /// Class represents neuron
     /// </summary>
-    /// <typeparam name="T">Type of input value</typeparam>
-    public class Neuron<T>
+    public class Neuron
     {
-        private Func<T[], T> ActivationFunction { get; set; }
+        private Func<Double[], Double[], Double> ActivationFunction { get; set; }
         private Double[] WeightFactors { get; set; }
-        private T _output;
+        private Double _output;
         private readonly int _inputCount;
         private void InitWeightFactors()
         {
@@ -28,24 +27,26 @@ namespace Backpropagation.Core
         /// </summary>
         /// <param name="inputCount">Count of neuon inputs</param>
         /// <param name="activationFunc">Neuron activation function</param>
-        /// <param name="inputs">Neuron inputs</param>
-        public Neuron(int inputCount, Func<T[],T> activationFunc, T[] inputs)
+        public Neuron(int inputCount, Func<Double[], Double[], Double> activationFunc)
         {
             _inputCount = inputCount;
 
-            Inputs = inputs;
             WeightFactors = new double[inputCount];
             ActivationFunction = activationFunc;
             InitWeightFactors();
         }
 
-        public T[] Inputs { get; private set; }
+        public void InitInputValues(Double[] inputValues)
+        {
+            Inputs = inputValues;
+        }
+        public Double[] Inputs { get; private set; }
 
-        virtual public T Output
+        virtual public Double Output
         {
             get 
             {
-                _output = ActivationFunction(Inputs);
+                _output = ActivationFunction(Inputs, WeightFactors);
                 return _output;
             }
             set { _output = value; }
