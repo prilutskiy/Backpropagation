@@ -45,16 +45,18 @@ namespace Backpropagation.Core
 
         public void InitNeuralLayers()
         {
+            NeuralLayers = new List<NeuralLayer>();
             if (ActivationFunction == null) throw new NullReferenceException("Activation function is not defined");
             for (int i = 0; i < LayerCount; i ++)
             {
-                var l = new NeuralLayer(InputCount, OutputCount, ActivationFunction);
+                var l = new NeuralLayer(InputCount, i == LayerCount-1 ? OutputCount : InputCount, ActivationFunction);
                 NeuralLayers.Add(l);
             }
         }
 
         public Double[] GetNetworkOutput(INeuralImage image)
         {
+            if (NeuralLayers == null) throw new NullReferenceException("Neural layers are not initialized");
             var inputLayer = GetInputNeuralLayer();
             inputLayer.InitInputValues(image.Values);
             var tempOutValues = inputLayer.GetLayerOutput();

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -29,9 +30,10 @@ namespace Backpropagation.Core
         }
         private void GenerateNeurons(int outputCount, Func<Double[], Double[], Double> activationFunc)
         {
+            Neurons = new List<Neuron>();
             for (int i = 0; i < outputCount; i++)
             {
-                var n = new Neuron(outputCount, activationFunc);
+                var n = new Neuron(_inputCount, activationFunc);
                 n.InitInputValues(Inputs);
                 Neurons.Add(n);
             }
@@ -45,6 +47,7 @@ namespace Backpropagation.Core
             int i = 0;
             foreach (var neuron in Neurons)
             {
+                neuron.InitInputValues(Inputs);
                 arr[i++] = neuron.Output;
             }
             return arr;

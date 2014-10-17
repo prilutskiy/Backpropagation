@@ -21,7 +21,7 @@ namespace Backpropagation.Forms
             switch (classString)
             {
                 case "Iris-setosa": return IrisClass.Setosa;
-                case "Iris-verginica": return IrisClass.Virginica;
+                case "Iris-virginica": return IrisClass.Virginica;
                 case "Iris-versicolor": return IrisClass.Versicolor;
                 default:
                     throw new InvalidOperationException();

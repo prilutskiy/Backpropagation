@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Troschuetz.Random.Generators;
 
 namespace Backpropagation.Core
 {
@@ -15,11 +16,13 @@ namespace Backpropagation.Core
         private Double[] WeightFactors { get; set; }
         private Double _output;
         private readonly int _inputCount;
+        static MT19937Generator r = new Troschuetz.Random.Generators.MT19937Generator();
         private void InitWeightFactors()
         {
-            var r = new Random();
             for (int i = 0; i < WeightFactors.Count(); i++)
+            {
                 WeightFactors[i] = ((double) r.Next(-5, 5))/10.0;
+            }
         }
 
         /// <summary>

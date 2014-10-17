@@ -39,6 +39,9 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="Troschuetz.Random">
+      <HintPath>..\packages\Troschuetz.Random.3.2.0\lib\net40-client\Troschuetz.Random.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
@@ -46,6 +49,17 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Backpropagation.Core\Backpropagation.Core.csproj">
+      <Project>{de3b513a-eff9-472d-9ff3-0625731b29cb}</Project>
+      <Name>Backpropagation.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Backpropagation.Forms\Backpropagation.Forms.csproj">
+      <Project>{97299845-95f2-43e7-8d9f-6f9313d4fb98}</Project>
+      <Name>Backpropagation.Forms</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
