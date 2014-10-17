@@ -27,7 +27,6 @@ namespace Backpropagation.Forms
                     throw new InvalidOperationException();
             }
         }
-        /*
         public static ICollection<Iris> GetIrisesFromFile(string path)
         {
             var irisList = new List<Iris>();
@@ -37,23 +36,38 @@ namespace Backpropagation.Forms
             {
                 if (irisLine.Length < 1) break;
                 var irProps = irisLine.Split(',');
-                var i = new Iris(GetIrisClass(irProps[4]),
+                var i = new Iris(GetIrisClass(irProps[4]), new[] {
                     Double.Parse(irProps[0], CultureInfo.InvariantCulture),
                     Double.Parse(irProps[1], CultureInfo.InvariantCulture),
                     Double.Parse(irProps[2], CultureInfo.InvariantCulture),
-                    Double.Parse(irProps[3], CultureInfo.InvariantCulture));
+                    Double.Parse(irProps[3], CultureInfo.InvariantCulture)});
                 irisList.Add(i);
             }
             return irisList;
         }
-        */
+        
         #endregion
 
+        public Iris(IrisClass _class, double[] values)
+        {
+            Class = _class;
+            Values = values;
+        }
         public IrisClass GetClass()
         {
             return (IrisClass) Class;
         }
-        public int Class { get; set; }
+
+        private IrisClass _irisClass;
+        public IrisClass Class
+        {
+            get { return _irisClass; }
+
+            set { ClassId = (int) value;
+                _irisClass = value;
+            }
+        }
+        public int ClassId { get; set; }
         public double[] Values { get; set; }
     }
 

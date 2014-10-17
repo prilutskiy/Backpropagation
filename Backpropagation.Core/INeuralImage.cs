@@ -9,7 +9,7 @@ namespace Backpropagation.Core
 
     public interface INeuralImage
     {
-        int Class { get; set; }
+        int ClassId { get; set; }
         double[] Values { get; set; }
     }
 }
