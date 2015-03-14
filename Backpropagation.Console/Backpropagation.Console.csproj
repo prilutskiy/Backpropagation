@@ -34,6 +34,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -44,22 +45,35 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Iris.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />
+    <None Include="Resources\iris.data" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Backpropagation.Core\Backpropagation.Core.csproj">
       <Project>{de3b513a-eff9-472d-9ff3-0625731b29cb}</Project>
       <Name>Backpropagation.Core</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Backpropagation.Forms\Backpropagation.Forms.csproj">
-      <Project>{97299845-95f2-43e7-8d9f-6f9313d4fb98}</Project>
-      <Name>Backpropagation.Forms</Name>
+    <ProjectReference Include="..\Backpropagation.WinForms\Backpropagation.WinForms.csproj">
+      <Project>{ed658345-4163-46ba-b473-f599d597825d}</Project>
+      <Name>Backpropagation.WinForms</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

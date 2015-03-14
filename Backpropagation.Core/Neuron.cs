@@ -4,31 +4,37 @@ using System.Linq;
 namespace Backpropagation.Core
 {
     /// <summary>
-    /// Class represents neuron
+    ///     Class represents neuron
     /// </summary>
     [Serializable]
     public class Neuron
     {
         #region Static members
-        static Random r = new Random();
+
+        private static readonly Random r = new Random();
+
         #endregion
 
         #region Private members
+
         private Func<Double[], Double[], Double> ActivationFunction { get; set; }
         private Double _output;
         private readonly int _inputCount;
+
         private void InitWeightFactors()
         {
-            for (int i = 0; i < WeightFactors.Count(); i++)
+            for (var i = 0; i < WeightFactors.Count(); i++)
             {
-                WeightFactors[i] = ((double)r.Next(-5, 5)) / 10.0;
+                WeightFactors[i] = r.Next(-5, 5)/10.0;
             }
         }
+
         #endregion
 
         #region Public members
+
         /// <summary>
-        /// Default ctor for creating neuron instance
+        ///     Default ctor for creating neuron instance
         /// </summary>
         /// <param name="inputCount">Count of neuon inputs</param>
         /// <param name="activationFunc">Neuron activation function</param>
@@ -42,49 +48,56 @@ namespace Backpropagation.Core
             InitWeightFactors();
             TrainSpeed = trainSpeed;
         }
+
         [Obsolete("This constructor is obsolete. Use parametrized one instead", true)]
         public Neuron()
         {
-            
         }
+
         /// <summary>
-        /// Adjusts neuron weight factors according to error signal set
+        ///     Adjusts neuron weight factors according to error signal set
         /// </summary>
         public void AdjustWeights()
         {
-            for (int i = 0; i < _inputCount; i++)
+            for (var i = 0; i < _inputCount; i++)
             {
-                WeightFactors[i] += TrainSpeed * ErrorSignal * Inputs[i] * _output * (1 - _output);
+                WeightFactors[i] += TrainSpeed*ErrorSignal*Inputs[i]*_output*(1 - _output);
             }
         }
+
         /// <summary>
-        /// Initializes neuron input values
+        ///     Initializes neuron input values
         /// </summary>
         /// <param name="inputValues"></param>
         public void InitInputValues(Double[] inputValues)
         {
             Inputs = inputValues;
         }
+
         /// <summary>
-        /// Neuron inputs
+        ///     Neuron inputs
         /// </summary>
         public Double[] Inputs { get; set; }
+
         /// <summary>
-        /// Neuron error signal
+        ///     Neuron error signal
         /// </summary>
         public Double ErrorSignal { get; set; }
+
         /// <summary>
-        /// Neuron weight factors
+        ///     Neuron weight factors
         /// </summary>
         public Double[] WeightFactors { get; set; }
+
         /// <summary>
-        /// Neuron training speed
+        ///     Neuron training speed
         /// </summary>
         public Double TrainSpeed { get; set; }
+
         /// <summary>
-        /// Neuron output signal
+        ///     Neuron output signal
         /// </summary>
-        virtual public Double Output
+        public virtual Double Output
         {
             get
             {
@@ -93,6 +106,7 @@ namespace Backpropagation.Core
             }
             set { _output = value; }
         }
+
         #endregion
     }
 }
